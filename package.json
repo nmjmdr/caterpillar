@@ -25,7 +25,7 @@
     "sinon": "^4.4.1"
   },
   "dependencies": {
-    "request": "^2.83.0",
-    "zlib": "^1.0.5"
+    "cheerio": "^1.0.0-rc.2",
+    "request": "^2.83.0"
   }
 }
