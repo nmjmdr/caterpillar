@@ -4,7 +4,7 @@ const sinon = require('sinon');
 const lib = require('../lib/crawler');
 const eventNames = require('../lib/event-names');
 
-describe("Given Crawler",()=>{
+describe('Given Crawler',()=>{
   beforeEach(()=>{
     sandbox = sinon.sandbox.create();
   });
@@ -12,7 +12,7 @@ describe("Given Crawler",()=>{
     sandbox.restore();
   });
 
-  describe("When the crawler is setup",()=>{
+  describe('When the crawler is setup',()=>{
 
     const fetch = sinon.stub();
     const onPageResulted = sinon.stub();
@@ -27,13 +27,14 @@ describe("Given Crawler",()=>{
     const crawler = lib.getCrawler(fetch, handlers);
 
     const nResults = 100;
-    const keywords = "some keywords";
+    const keywords = 'some keywords';
     const resultsPerPage = 10;
 
-    it("Should invoke fetcher with appropriate params",(done)=>{
-
+    beforeEach(()=>{
       crawler(nResults, resultsPerPage, keywords);
+    })
 
+    it('Should invoke fetcher with appropriate params',(done)=>{
       expect(fetch.called).to.be.true;
 
       const fetchArgs = fetch.getCalls(0)[0].args;
@@ -49,15 +50,12 @@ describe("Given Crawler",()=>{
       done();
     });
 
-    it("Should invoke onPageResulted, whenever fetch gets a page",(done)=>{
-
-      crawler(nResults, keywords);
-
+    it('Should invoke onPageResulted, whenever fetch gets a page',(done)=>{
       const fetchArgs = fetch.getCalls(0)[0].args;
       const resultsEmitter = fetchArgs[1];
       expect(resultsEmitter).to.exist;
 
-      const page =  { "payload": "payload" };
+      const page =  { 'payload': 'payload' };
 
       resultsEmitter.emit(eventNames.PageResulted, page);
 
@@ -66,14 +64,11 @@ describe("Given Crawler",()=>{
       done();
     });
 
-    it("Should invoke onPageFetchErroed, whenever fetch results in an error",(done)=>{
-
-      crawler(nResults, keywords);
-
+    it('Should invoke onPageFetchErroed, whenever fetch results in an error',(done)=>{
       const fetchArgs = fetch.getCalls(0)[0].args;
       const resultsEmitter = fetchArgs[1];
       expect(resultsEmitter).to.exist;
-      const error = "error";
+      const error = 'error';
       resultsEmitter.emit(eventNames.PageFetchErrored, error);
 
       expect(onPageFetchErroed.called).to.be.true;
@@ -81,10 +76,7 @@ describe("Given Crawler",()=>{
       done();
     });
 
-    it("Should invoke onAllPagesFetched, whenever all pages are fetched",(done)=>{
-
-      crawler(nResults, keywords);
-
+    it('Should invoke onAllPagesFetched, whenever all pages are fetched',(done)=>{
       const fetchArgs = fetch.getCalls(0)[0].args;
       const resultsEmitter = fetchArgs[1];
       expect(resultsEmitter).to.exist;
