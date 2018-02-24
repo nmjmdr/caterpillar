@@ -4,7 +4,7 @@ const sinon = require('sinon');
 const EventEmitter = require('events');
 const serialFetch = require('../lib/serial-fetch');
 const eventNames = require('../lib/event-names');
-const pageFetcher = require('../lib/page-fetcher');
+const pageFetcher = require('../lib/page-fetch');
 const check = require('./expect-checks').check;
 
 describe('Given the serial fetcher',()=>{
@@ -22,19 +22,26 @@ describe('Given the serial fetcher',()=>{
   describe('When search pages are present to fetch',()=>{
     it('Should fetch all pages',(done)=>{
       const emitter = new TestEmitter();
-      const fetchPage = sandbox.stub().returns(Promise.resolve({
-        hasSearchResults: true
-      }));
+      let resultsCount = 0;
+      const fetchPage = (pageNumber) => {
+        const p = Promise.resolve({
+          hasSearchResults: true,
+          hasNext: (resultsCount < nResults),
+          links: Array.from(Array(resultsPerPage+1).keys()).slice(1)
+        });
+        resultsCount = resultsCount + resultsPerPage;
+        return p;
+      }
       const fetchPageCreate = sandbox.stub(pageFetcher, 'create').returns(fetchPage);
 
-      let pageFetchedCount = 0;
+      let resultsFetched = 0;
       emitter.on(eventNames.PageFetched,(payload)=>{
-        pageFetchedCount = pageFetchedCount + 1;
+        resultsFetched += payload.links.length ;
       });
 
       emitter.on(eventNames.SearchDone,()=>{
         check(done, ()=>{
-          expect(pageFetchedCount).to.be.equal(Math.ceil(nResults/resultsPerPage));
+          expect(resultsFetched).to.be.equal(nResults);
         });
       });
 
@@ -46,28 +53,68 @@ describe('Given the serial fetcher',()=>{
     });
   });
 
+  describe('When search pages are present to fetch',()=>{
+    describe('When it is returning less that expected number of results per page',()=>{
+      it('Should still fetch all pages',(done)=>{
+        const emitter = new TestEmitter();
+        let resultsCount = 0;
+        const links = Array.from(Array(resultsPerPage+1).keys()).slice(3);
+        const fetchPage = (pageNumber) => {
+          const p = Promise.resolve({
+            hasSearchResults: true,
+            hasNext: (resultsCount < nResults),
+            links: links
+          });
+          resultsCount = resultsCount + links.length;
+          return p;
+        }
+        const fetchPageCreate = sandbox.stub(pageFetcher, 'create').returns(fetchPage);
+
+        let resultsFetched = 0;
+        emitter.on(eventNames.PageFetched,(payload)=>{
+          resultsFetched += payload.links.length ;
+        });
+
+        emitter.on(eventNames.SearchDone,()=>{
+          check(done, ()=>{
+            expect(resultsFetched >= nResults).to.be.true;
+            expect(resultsFetched < (nResults+resultsPerPage)).to.be.true;
+          });
+        });
+
+        serialFetch.fetch({
+          nResults,
+          resultsPerPage,
+          keywords
+        }, emitter);
+      });
+    });
+  });
+
   describe('When search results are partial (could fetch less than requested number of results)',(done)=>{
     it('Should indicate the result as partial',(done)=>{
       const emitter = new TestEmitter();
-      let pageCount = 0;
-      const lastPageWithResults = 5;
+      let resultsCount = 0;
+      const stopAt = 60;
       const fetchPage = ()=>{
-        const hasSearchResults =  pageCount < lastPageWithResults;
-        pageCount = pageCount + 1;
+        const hasNext =  resultsCount < stopAt;
+        resultsCount += resultsPerPage;
         return Promise.resolve({
-          hasSearchResults: hasSearchResults
+          hasSearchResults: true,
+          hasNext: hasNext,
+          links: Array.from(Array(resultsPerPage+1).keys()).slice(1)
         });
       }
       const fetchPageCreate = sandbox.stub(pageFetcher, 'create').returns(fetchPage);
 
-      let pageFetchedCount = 0;
-      emitter.on(eventNames.PageFetched,()=>{
-        pageFetchedCount = pageFetchedCount + 1;
+      let resultsFetched = 0;
+      emitter.on(eventNames.PageFetched,(payload)=>{
+        resultsFetched += payload.links.length;
       });
 
       emitter.on(eventNames.SearchDone,(payload)=>{
         check(done, ()=>{
-          expect(pageFetchedCount).to.be.equal(lastPageWithResults);
+          expect(resultsFetched).to.be.equal((stopAt+resultsPerPage))
           expect(payload.isPartial).to.be.true;
         });
       });
