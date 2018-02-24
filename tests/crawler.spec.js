@@ -2,7 +2,7 @@ const chai = require('chai');
 const expect = chai.expect;
 const sinon = require('sinon');
 const lib = require('../lib/crawler');
-const eventNames = require('../lib/event-names');
+const events = require('../lib/event-names');
 
 describe('Given Crawler',()=>{
   beforeEach(()=>{
@@ -20,9 +20,9 @@ describe('Given Crawler',()=>{
     const onPageFetchErroed = sinon.stub();
 
     let handlers = {};
-    handlers[eventNames.PageResulted] = onPageResulted;
-    handlers[eventNames.PageFetchErrored] = onPageFetchErroed,
-    handlers[eventNames.AllPagesFetched] = onAllPagesFetched
+    handlers[events.PageResulted] = onPageResulted;
+    handlers[events.PageFetchErrored] = onPageFetchErroed,
+    handlers[events.AllPagesFetched] = onAllPagesFetched
 
     const crawler = lib.getCrawler(fetch, handlers);
 
@@ -57,7 +57,7 @@ describe('Given Crawler',()=>{
 
       const page =  { 'payload': 'payload' };
 
-      resultsEmitter.emit(eventNames.PageResulted, page);
+      resultsEmitter.emit(events.PageResulted, page);
 
       expect(onPageResulted.called).to.be.true;
       expect(onPageResulted.getCalls(0)[0].args[0]).to.deep.equal(page);
@@ -69,7 +69,7 @@ describe('Given Crawler',()=>{
       const resultsEmitter = fetchArgs[1];
       expect(resultsEmitter).to.exist;
       const error = 'error';
-      resultsEmitter.emit(eventNames.PageFetchErrored, error);
+      resultsEmitter.emit(events.PageFetchErrored, error);
 
       expect(onPageFetchErroed.called).to.be.true;
       expect(onPageFetchErroed.getCalls(0)[0].args[0]).to.deep.equal(error);
@@ -81,7 +81,7 @@ describe('Given Crawler',()=>{
       const resultsEmitter = fetchArgs[1];
       expect(resultsEmitter).to.exist;
 
-      resultsEmitter.emit(eventNames.AllPagesFetched);
+      resultsEmitter.emit(events.AllPagesFetched);
 
       expect(onAllPagesFetched.called).to.be.true;
       done();
