@@ -2,7 +2,7 @@ const chai = require('chai');
 const expect = chai.expect;
 const sinon = require('sinon');
 const lib = require('../lib/crawler');
-const events = require('../lib/event-names');
+const eventNames = require('../lib/event-names');
 
 describe.only('Given Crawler',()=>{
   let sandbox = sinon.sandbox.create();
@@ -12,8 +12,16 @@ describe.only('Given Crawler',()=>{
 
   describe('When crawler is setup',()=>{
     const fetch = sandbox.stub();
-    const handler = sandbox.stub();
-    const crawl = lib.getCrawler(fetch, handler);
+    const onPageFetched = sandbox.stub();
+    const onSearchDone = sandbox.stub();
+    const onSearchFailed = sandbox.stub();
+    const handlers = {};
+
+    handlers[eventNames.PageFetched] = onPageFetched;
+    handlers[eventNames.SearchDone] = onSearchDone;
+    handlers[eventNames.SearchFailed] = onSearchFailed;
+
+    const crawl = lib.getCrawler(fetch, handlers);
     const nResults = 100;
     const resultsPerPage = 10;
     const keywords = "some keywords";
@@ -29,13 +37,33 @@ describe.only('Given Crawler',()=>{
       done();
     });
 
-    it('Should subscribe the handler to PageFetched event',(done)=>{
+    it('Should subscribe the onPageFetched to PageFetched event',(done)=>{
       crawl(nResults, resultsPerPage, keywords);
       expect(fetch.called).to.be.true;
       const emitter = fetch.getCalls(0)[0].args[1];
       expect(emitter).to.exist;
-      emitter.emit(events.PageFetched);
-      expect(handler.called).to.be.true;
+      emitter.emit(eventNames.PageFetched);
+      expect(onPageFetched.called).to.be.true;
+      done();
+    });
+
+    it('Should subscribe the onSearchDone to SearchDone event',(done)=>{
+      crawl(nResults, resultsPerPage, keywords);
+      expect(fetch.called).to.be.true;
+      const emitter = fetch.getCalls(0)[0].args[1];
+      expect(emitter).to.exist;
+      emitter.emit(eventNames.SearchDone);
+      expect(onSearchDone.called).to.be.true;
+      done();
+    });
+
+    it('Should subscribe the onSearchFailed to SearchFailed event',(done)=>{
+      crawl(nResults, resultsPerPage, keywords);
+      expect(fetch.called).to.be.true;
+      const emitter = fetch.getCalls(0)[0].args[1];
+      expect(emitter).to.exist;
+      emitter.emit(eventNames.SearchFailed);
+      expect(onSearchFailed.called).to.be.true;
       done();
     });
   });
