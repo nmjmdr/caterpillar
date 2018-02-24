@@ -2,10 +2,10 @@ const chai = require('chai');
 const expect = chai.expect;
 const sinon = require('sinon');
 const EventEmitter = require('events');
-const serialFetch = require('../lib/serial-fetch');
-const eventNames = require('../lib/event-names');
-const pageFetcher = require('../lib/page-fetch');
-const check = require('./expect-checks').check;
+const serialFetch = require('../../src/lib/serial-fetch');
+const eventNames = require('../../src/lib/event-names');
+const pageFetcher = require('../../src/lib/page-fetch');
+const check = require('../expect-checks').check;
 
 describe('Given the serial fetcher',()=>{
   let sandbox = sinon.sandbox.create();

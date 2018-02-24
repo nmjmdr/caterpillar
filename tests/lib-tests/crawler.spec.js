@@ -1,9 +1,9 @@
 const chai = require('chai');
 const expect = chai.expect;
 const sinon = require('sinon');
-const lib = require('../lib/crawler');
-const eventNames = require('../lib/event-names');
-const check = require('./expect-checks').check;
+const lib = require('../../src/lib/crawler');
+const eventNames = require('../../src/lib/event-names');
+const check = require('../expect-checks').check;
 
 describe('Given Crawler',()=>{
   let sandbox = sinon.sandbox.create();
