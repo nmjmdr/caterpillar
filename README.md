@@ -17,8 +17,26 @@ I have tried to follow a `functional` and `event driven` approach.
 
 
 ### Components:
+
+Crawler is responsible for crawling the pages. It sets up an event-emitter that can be used by potential listeners for events: _ResultsFetched, SearchDone and SearchFailed_.
+It uses a dependency that is _injected into it_ to fetch the pages. This depedency is implemented by two components: `serial-fetch` and `parallel-fetch`.
+
+Serial-fetch fetches the search results pages one after the another (Probably the better as this might avoid getting the IP blocked).
+
+Parallel-fetch fetches the search results parallely.
+
+Both these fetches use a common component `page-fetch` to fetch a single search result page.
+
 ![components](https://raw.githubusercontent.com/nmjmdr/caterpillar/master/screenshots/Components.png)
 
+
+### Unit tests:
+The program runs unit tests using chain, mocha, sinon.
+
+### Performance:
+The program uses "cheerio" to parse the html body of the search results. Cheerio loads the html and converts it a dom. It does not do any JS exection, just laods the dom to make it easy to search the elements. Still, ideally a regular expressions based search would be more performant. I faced some issues in parsing the body using regex and hence the use of cheerio. As one f the next steps it would be better to use regex to parse the body instead of using cheerio.
+
+Still it takes a lot less to parse the body as compared to fetching the response:
 
 
 
