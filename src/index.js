@@ -17,7 +17,7 @@ function subscribeToCounterEvents(eventEmitter) {
     console.log("Number of matched results: ", ledger.length)
     console.log("-------------------------");
     ledger.forEach((entry)=>{
-      console.log(entry.link+ ", Page no. "+(entry.pageNumber+1));
+      console.log(entry.link+ ", Ranking: "+(entry.ranking));
     });
     console.log("-------------------------");
   });

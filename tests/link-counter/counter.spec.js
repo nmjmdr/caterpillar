@@ -24,21 +24,17 @@ describe('Given link counter',()=>{
       const sourceEmitter = new TestEmitter();
       const results = [
         {
-          links: [('https://'+domainToLookFor), 'https://not-domain-looking-for.com'],
+          links: [('https://'+domainToLookFor), 'https://not-domain-looking-for.com',('http://'+domainToLookFor)],
           pageNumber: 1
-        },
-        {
-          links: [('https://'+domainToLookFor), 'https://not-domain-looking-for.com'],
-          pageNumber: 2
         }
       ];
 
       counter.eventEmitter.on(linkCounter.SuccessEvent, (payload)=>{
         expect(payload.length).to.be.equal(2);
         expect(payload[0].link).to.be.equal(results[0].links[0]);
-        expect(payload[0].pageNumber).to.be.equal(results[0].pageNumber);
-        expect(payload[1].link).to.be.equal(results[1].links[0]);
-        expect(payload[1].pageNumber).to.be.equal(results[1].pageNumber);
+        expect(payload[0].ranking).to.be.equal(1);
+        expect(payload[1].link).to.be.equal(results[0].links[2]);
+        expect(payload[1].ranking).to.be.equal(3);
         done();
       });
 

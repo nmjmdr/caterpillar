@@ -20,12 +20,13 @@ function areTheSameDomainName(link1, link2) {
   return link1Domain.toLowerCase() === link2Domain.toLowerCase()
 }
 
-function addMatchingLinksToLedger(ledger, result, urlToLookFor) {
+function addMatchingLinksToLedger(ledger, result, urlToLookFor, ranking) {
   const matchedLinks = result.links.reduce((acc,link)=>{
+    ranking++
     if(areTheSameDomainName(link, urlToLookFor)) {
       acc.push({
         link: link,
-        pageNumber: result.pageNumber
+        ranking: ranking
       })
     }
     return acc;
@@ -35,6 +36,8 @@ function addMatchingLinksToLedger(ledger, result, urlToLookFor) {
 
 function create() {
   const emitter = new LinkCountEmitter();
+  // maintains the ranking of the link
+  let ranking = 0;
   return {
     eventEmitter: emitter,
     count: (urlToLookFor, sourceEmitter) => {
@@ -42,7 +45,7 @@ function create() {
 
       sourceEmitter.on(events.ResultsFetched, (results) => {
         results.forEach((result)=>{
-          addMatchingLinksToLedger(ledger, result, urlToLookFor);
+          addMatchingLinksToLedger(ledger, result, urlToLookFor, ranking);
         });
       });
 
