@@ -37,22 +37,22 @@ function create() {
   const emitter = new LinkCountEmitter();
   return {
     eventEmitter: emitter,
-    count: (urlToLookFor, crawlerEventEmitter) => {
+    count: (urlToLookFor, sourceEmitter) => {
       let ledger = [];
 
-      crawlerEventEmitter.on(events.ResultsFetched, (results) => {
+      sourceEmitter.on(events.ResultsFetched, (results) => {
         results.forEach((result)=>{
           addMatchingLinksToLedger(ledger, result, urlToLookFor);
         });
       });
 
-      crawlerEventEmitter.on(events.SearchDone, (result) => {
-        emitter.emit(SuccessEvent, ledger)
+      sourceEmitter.on(events.SearchDone, (result) => {
+        emitter.emit(SuccessEvent, ledger);
         return;
       });
 
-      crawlerEventEmitter.on(events.SearchFailed, (error) => {
-        emitter.emit(FailedEvent, error)
+      sourceEmitter.on(events.SearchFailed, (error) => {
+        emitter.emit(FailedEvent, error);
         return;
       });
     }
