@@ -1,4 +1,6 @@
 const counter = require('./link-counter/counter');
+const lib = require('./lib/crawler');
+const serialFetch = require('./lib/serial-fetch');
 
 function parseArgs(args) {
   return args.reduce((acc, arg)=>{
@@ -44,6 +46,11 @@ handlers[counter.FailedEvent] = (error) => {
   console.log("Failed to search: ", error);
 }
 const parsedArgs = validateArgs(process.argv);
+
+
+const crawler = lib.getCrawler(serialFetch.fetch);
 const countFunction = counter.create(handlers);
-countFunction(parsedArgs.keywords, parsedArgs.url);
+countFunction(parsedArgs.url, crawler.eventEmitter);
+crawler.crawl(100,10,parsedArgs.keywords);
+
 console.log("Processing...")

@@ -41,27 +41,27 @@ function create(handlers) {
     emitter.on(evt,handlers[evt]);
   });
 
-  return (keywords, urlToLookFor) => {
+  return (urlToLookFor, crawlerEventEmitter) => {
     let ledger = [];
 
     const crawler = lib.getCrawler(serialFetch.fetch)
 
-    crawler.eventEmitter.on(events.ResultsFetched, (results) => {
+    crawlerEventEmitter.on(events.ResultsFetched, (results) => {
       results.forEach((result)=>{
         addMatchingLinksToLedger(ledger, result, urlToLookFor);
       });
     });
 
-    crawler.eventEmitter.on(events.SearchDone, (result) => {
+    crawlerEventEmitter.on(events.SearchDone, (result) => {
       emitter.emit(SuccessEvent, ledger)
       return;
     });
 
-    crawler.eventEmitter.on(events.SearchFailed, (error) => {
+    crawlerEventEmitter.on(events.SearchFailed, (error) => {
       emitter.emit(FailedEvent, error)
       return;
     });
-    crawler.crawl(100, 10, keywords);
+    
   }
 }
 
