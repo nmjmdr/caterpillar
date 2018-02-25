@@ -6,5 +6,10 @@ Caterpillar fetches results from google and counts the number of links that have
 ### How to use:
 `node index.js keywords="keywords" url="domain-to-look-for"`
 
+Example:
+![use](https://raw.githubusercontent.com/nmjmdr/caterpillar/master/screenshots/creditor_watch_use.png)
+
+
+
 
 
