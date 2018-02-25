@@ -16,7 +16,8 @@ I have tried to follow a `functional` and `event driven` approach.
 >_The program is flexible and granular so that it can be easily extended to do something else with the search results isntead > of counting the url matches._
 
 
-
+### Components:
+![components](https://raw.githubusercontent.com/nmjmdr/caterpillar/master/screenshots/Components.png)
 
 
 
