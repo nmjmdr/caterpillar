@@ -2,12 +2,12 @@ const chai = require('chai');
 const expect = chai.expect;
 const sinon = require('sinon');
 const EventEmitter = require('events');
-const serialFetch = require('../../src/lib/serial-fetch');
+const parallelFetch = require('../../src/lib/parallel-fetch');
 const eventNames = require('../../src/lib/event-names');
 const pageFetcher = require('../../src/lib/page-fetch');
 const check = require('../expect-checks').check;
 
-describe('Given the serial fetcher',()=>{
+describe('Given the parallel fetcher',()=>{
   let sandbox = sinon.sandbox.create();
   afterEach(()=>{
     sandbox.restore();
@@ -36,7 +36,10 @@ describe('Given the serial fetcher',()=>{
 
       let resultsFetched = 0;
       emitter.on(eventNames.ResultsFetched,(payload)=>{
-        resultsFetched += payload[0].links.length ;
+        resultsFetched = payload.reduce((acc, page)=>{
+          acc += page.links.length;
+          return acc;
+        },0);
       });
 
       emitter.on(eventNames.SearchDone,()=>{
@@ -45,50 +48,11 @@ describe('Given the serial fetcher',()=>{
         });
       });
 
-      serialFetch.fetch({
+      parallelFetch.fetch({
         nResults,
         resultsPerPage,
         keywords
       }, emitter);
-    });
-  });
-
-  describe('When search pages are present to fetch',()=>{
-    describe('When it is returning less that expected number of results per page',()=>{
-      it('Should still fetch all pages',(done)=>{
-        const emitter = new TestEmitter();
-        let resultsCount = 0;
-        const links = Array.from(Array(resultsPerPage+1).keys()).slice(3);
-        const fetchPage = (pageNumber) => {
-          const p = Promise.resolve({
-            hasSearchResults: true,
-            hasNext: (resultsCount < nResults),
-            links: links,
-            pageNumber: pageNumber
-          });
-          resultsCount = resultsCount + links.length;
-          return p;
-        }
-        const fetchPageCreate = sandbox.stub(pageFetcher, 'create').returns(fetchPage);
-
-        let resultsFetched = 0;
-        emitter.on(eventNames.ResultsFetched,(payload)=>{
-          resultsFetched += payload[0].links.length ;
-        });
-
-        emitter.on(eventNames.SearchDone,()=>{
-          check(done, ()=>{
-            expect(resultsFetched >= nResults).to.be.true;
-            expect(resultsFetched < (nResults+resultsPerPage)).to.be.true;
-          });
-        });
-
-        serialFetch.fetch({
-          nResults,
-          resultsPerPage,
-          keywords
-        }, emitter);
-      });
     });
   });
 
@@ -103,7 +67,7 @@ describe('Given the serial fetcher',()=>{
         return Promise.resolve({
           hasSearchResults: true,
           hasNext: hasNext,
-          links: Array.from(Array(resultsPerPage+1).keys()).slice(1),
+          links: Array.from(Array(resultsPerPage+1).keys()).slice(4),
           pageNumber: pageNumber
         });
       }
@@ -111,7 +75,10 @@ describe('Given the serial fetcher',()=>{
 
       let resultsFetched = 0;
       emitter.on(eventNames.ResultsFetched,(payload)=>{
-        resultsFetched += payload[0].links.length;
+        resultsFetched = payload.reduce((acc, page)=>{
+          acc += page.links.length;
+          return acc;
+        },0);
       });
 
       emitter.on(eventNames.SearchDone,(payload)=>{
@@ -121,7 +88,7 @@ describe('Given the serial fetcher',()=>{
         });
       });
 
-      serialFetch.fetch({
+      parallelFetch.fetch({
         nResults,
         resultsPerPage,
         keywords
@@ -142,7 +109,7 @@ describe('Given the serial fetcher',()=>{
         });
       });
 
-      serialFetch.fetch({
+      parallelFetch.fetch({
         nResults,
         resultsPerPage,
         keywords
