@@ -36,7 +36,7 @@ describe('Given the serial fetcher',()=>{
 
       let resultsFetched = 0;
       emitter.on(eventNames.ResultsFetched,(payload)=>{
-        resultsFetched += payload.links.length ;
+        resultsFetched += payload[0].links.length ;
       });
 
       emitter.on(eventNames.SearchDone,()=>{
@@ -72,7 +72,7 @@ describe('Given the serial fetcher',()=>{
 
         let resultsFetched = 0;
         emitter.on(eventNames.ResultsFetched,(payload)=>{
-          resultsFetched += payload.links.length ;
+          resultsFetched += payload[0].links.length ;
         });
 
         emitter.on(eventNames.SearchDone,()=>{
@@ -109,7 +109,7 @@ describe('Given the serial fetcher',()=>{
 
       let resultsFetched = 0;
       emitter.on(eventNames.ResultsFetched,(payload)=>{
-        resultsFetched += payload.links.length;
+        resultsFetched += payload[0].links.length;
       });
 
       emitter.on(eventNames.SearchDone,(payload)=>{

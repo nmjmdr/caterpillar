@@ -22,6 +22,19 @@ function areTheSameDomainName(link1, link2) {
   return link1Domain.toLowerCase() === link2Domain.toLowerCase()
 }
 
+function addMatchingLinksToLedger(ledger, result, urlToLookFor) {
+  const matchedLinks = result.links.reduce((acc,link)=>{
+    if(areTheSameDomainName(link, urlToLookFor)) {
+      acc.push({
+        link: link,
+        pageNumber: result.pageNumber
+      })
+    }
+    return acc;
+  },[]);
+  ledger.push(...matchedLinks);
+}
+
 function create(handlers) {
   const emitter = new LinkCountEmitter();
   Object.keys(handlers).forEach((evt)=>{
@@ -32,17 +45,10 @@ function create(handlers) {
     let internalHandlers = {};
     let ledger = [];
 
-    internalHandlers[events.ResultsFetched] = (result) => {
-      const matchedLinks = result.links.reduce((acc,link)=>{
-        if(areTheSameDomainName(link, urlToLookFor)) {
-          acc.push({
-            link: link,
-            pageNumber: result.pageNumber
-          })
-        }
-        return acc;
-      },[]);
-      ledger.push(...matchedLinks);
+    internalHandlers[events.ResultsFetched] = (results) => {
+      results.forEach((result)=>{
+        addMatchingLinksToLedger(ledger, result, urlToLookFor);
+      });
     }
     internalHandlers[events.SearchDone] = (result) => {
       emitter.emit(SuccessEvent, ledger)
