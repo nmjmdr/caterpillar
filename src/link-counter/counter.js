@@ -33,31 +33,29 @@ function addMatchingLinksToLedger(ledger, result, urlToLookFor) {
   ledger.push(...matchedLinks);
 }
 
-function create(handlers) {
+function create() {
   const emitter = new LinkCountEmitter();
-  Object.keys(handlers).forEach((evt)=>{
-    emitter.on(evt,handlers[evt]);
-  });
+  return {
+    eventEmitter: emitter,
+    count: (urlToLookFor, crawlerEventEmitter) => {
+      let ledger = [];
 
-  return (urlToLookFor, crawlerEventEmitter) => {
-    let ledger = [];
-
-    crawlerEventEmitter.on(events.ResultsFetched, (results) => {
-      results.forEach((result)=>{
-        addMatchingLinksToLedger(ledger, result, urlToLookFor);
+      crawlerEventEmitter.on(events.ResultsFetched, (results) => {
+        results.forEach((result)=>{
+          addMatchingLinksToLedger(ledger, result, urlToLookFor);
+        });
       });
-    });
 
-    crawlerEventEmitter.on(events.SearchDone, (result) => {
-      emitter.emit(SuccessEvent, ledger)
-      return;
-    });
+      crawlerEventEmitter.on(events.SearchDone, (result) => {
+        emitter.emit(SuccessEvent, ledger)
+        return;
+      });
 
-    crawlerEventEmitter.on(events.SearchFailed, (error) => {
-      emitter.emit(FailedEvent, error)
-      return;
-    });
-
+      crawlerEventEmitter.on(events.SearchFailed, (error) => {
+        emitter.emit(FailedEvent, error)
+        return;
+      });
+    }
   }
 }
 

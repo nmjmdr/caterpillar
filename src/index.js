@@ -11,6 +11,22 @@ const ParallelFetchFunction = "parallel";
 const fetchFunctionType = config['fetch-function-type'];
 const fetchFunction = (fetchFunctionType == SerialFetchFunction)? serialFetch.fetch : parallelFetch.fetch;
 
+function subscribeToCounterEvents(eventEmitter) {
+  eventEmitter.on(counter.SuccessEvent, (ledger) => {
+    console.log("");
+    console.log("Number of matched results: ", ledger.length)
+    console.log("-------------------------");
+    ledger.forEach((entry)=>{
+      console.log(entry.link+ ", Page no. "+(entry.pageNumber+1));
+    });
+    console.log("-------------------------");
+  });
+
+  eventEmitter.on(counter.FailedEvent, (error) => {
+    console.log("Failed to search: ", error);
+  });
+}
+
 
 const validatedArgs = argValidator.validate(process.argv);
 if(!validatedArgs.ok) {
@@ -20,28 +36,12 @@ if(!validatedArgs.ok) {
 
 const parsedArgs = validatedArgs.parsedArgs;
 
-
-let handlers = {};
-handlers[counter.SuccessEvent] = (ledger) => {
-  console.log("");
-  console.log("Number of matched results: ", ledger.length)
-  console.log("-------------------------");
-  ledger.forEach((entry)=>{
-    console.log(entry.link+ ", Page no. "+(entry.pageNumber+1));
-  });
-  console.log("-------------------------");
-};
-
-handlers[counter.FailedEvent] = (error) => {
-  console.log("Failed to search: ", error);
-}
-
-
 console.log("Using Fetch function type: ", fetchFunctionType);
 
 const crawler = lib.getCrawler(fetchFunction);
-const countFunction = counter.create(handlers);
-countFunction(parsedArgs.url, crawler.eventEmitter);
+const linkCounter = counter.create();
+subscribeToCounterEvents(linkCounter.eventEmitter);
+linkCounter.count(parsedArgs.url, crawler.eventEmitter);
 crawler.crawl(100,10,parsedArgs.keywords);
 
 console.log("Processing...")
