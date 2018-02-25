@@ -51,7 +51,8 @@ function create(keywords, resultsPerPage) {
         if(!err && response.statusCode === 200) {
           resolve(buildResultsPage(response.body, resultsPerPage));
         } else {
-          reject(new Error('Code: '+response.statusCode+' Error: '+err));
+
+          reject(new Error('Error: '+err+(response? ('Status Code: '+response.statusCode) : '')));
         }
       });
     });

@@ -1,5 +1,3 @@
-const lib = require('../lib/crawler');
-const serialFetch = require('../lib/serial-fetch');
 const events = require('../lib/event-names');
 const EventEmitter = require('events');
 const url = require('url');
@@ -44,8 +42,6 @@ function create(handlers) {
   return (urlToLookFor, crawlerEventEmitter) => {
     let ledger = [];
 
-    const crawler = lib.getCrawler(serialFetch.fetch)
-
     crawlerEventEmitter.on(events.ResultsFetched, (results) => {
       results.forEach((result)=>{
         addMatchingLinksToLedger(ledger, result, urlToLookFor);
@@ -61,7 +57,7 @@ function create(handlers) {
       emitter.emit(FailedEvent, error)
       return;
     });
-    
+
   }
 }
 
