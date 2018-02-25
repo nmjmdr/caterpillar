@@ -1,34 +1,24 @@
 const counter = require('./link-counter/counter');
 const lib = require('./lib/crawler');
 const serialFetch = require('./lib/serial-fetch');
+const parallelFetch = require('./lib/parallel-fetch');
+const config = require('../config');
+const argValidator = require('./utils/arg-validator');
 
-function parseArgs(args) {
-  return args.reduce((acc, arg)=>{
-    const parts = arg.split('=');
-    if(parts && parts.length == 2 && (parts[0] === 'keywords' || parts[0] === 'url')) {
-      acc[parts[0]] = parts[1];
-    }
-    return acc;
-  },{ keywords: null, url: null });
-}
+const SerialFetchFunction = "serial";
+const ParallelFetchFunction = "parallel";
 
-function printHelp() {
+const fetchFunctionType = config['fetch-function-type'];
+const fetchFunction = (fetchFunctionType == SerialFetchFunction)? serialFetch.fetch : parallelFetch.fetch;
+
+
+const validatedArgs = argValidator.validate(process.argv);
+if(!validatedArgs.ok) {
   console.log("Usage: node index.js keywords=\"some keywords\" url=\"url-to-look-for\" ");
   process.exit(1);
 }
 
-function validateArgs(args) {
-  if(args.length < 4) {
-    printHelp();
-  }
-  const parsedArgs = parseArgs([args[2], args[3]]);
-  if(!parsedArgs.keywords || !parsedArgs.url) {
-    printHelp();
-  }
-  return parsedArgs;
-}
-
-
+const parsedArgs = validatedArgs.parsedArgs;
 
 
 let handlers = {};
@@ -45,10 +35,11 @@ handlers[counter.SuccessEvent] = (ledger) => {
 handlers[counter.FailedEvent] = (error) => {
   console.log("Failed to search: ", error);
 }
-const parsedArgs = validateArgs(process.argv);
 
 
-const crawler = lib.getCrawler(serialFetch.fetch);
+console.log("Using Fetch function type: ", fetchFunctionType);
+
+const crawler = lib.getCrawler(fetchFunction);
 const countFunction = counter.create(handlers);
 countFunction(parsedArgs.url, crawler.eventEmitter);
 crawler.crawl(100,10,parsedArgs.keywords);

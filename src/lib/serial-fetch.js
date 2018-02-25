@@ -16,7 +16,6 @@ function fetch(searchParams, eventEmitter) {
     return fetchPage(pageNumber);
   },(page)=>{
     if(page.hasSearchResults) {
-      page.pageNumber = pageNumber;
       eventEmitter.emit(eventNames.ResultsFetched, [page]);
       resultsCount = resultsCount + page.links.length;
       pageNumber = pageNumber + 1;
@@ -28,7 +27,7 @@ function fetch(searchParams, eventEmitter) {
   })
   .catch((err)=>{
     eventEmitter.emit(eventNames.SearchFailed, { error: err });
-  })
+  });
 }
 
 module.exports = {

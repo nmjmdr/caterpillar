@@ -2,12 +2,13 @@ const request = require('request');
 const querystring = require('querystring');
 const cheerio = require('cheerio');
 
-function buildResultsPage(body, resultsPerPage) {
+function buildResultsPage(body, resultsPerPage, pageNumber) {
   const parsedBody = parseBody(body);
   let result = {
     hasSearchResults: (parsedBody.links.length > 0),
     hasNext: parsedBody.hasNext,
-    links: parsedBody.links
+    links: parsedBody.links,
+    pageNumber: pageNumber
   }
   return result;
 }
@@ -49,7 +50,7 @@ function create(keywords, resultsPerPage) {
     return new Promise((resolve, reject)=>{
       request(options,(err, response, body)=>{
         if(!err && response.statusCode === 200) {
-          resolve(buildResultsPage(response.body, resultsPerPage));
+          resolve(buildResultsPage(response.body, resultsPerPage, pageNumber));
         } else {
 
           reject(new Error('Error: '+err+(response? ('Status Code: '+response.statusCode) : '')));
