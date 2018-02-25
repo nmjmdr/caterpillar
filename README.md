@@ -11,6 +11,9 @@ _Example_:
 
 ```The program looks for likns with the same `domain` as that of the url provided as input argument. It then outputs the links that did meet this criterion and the page numbes of which these links were found in google search results.```
 
+Another example:
+![anotherex](https://raw.githubusercontent.com/nmjmdr/caterpillar/master/screenshots/use_and_example_with_page_no.png)
+
 ## Design notes:
 I have tried to follow a `functional` and `event driven` approach. 
 >_The program is flexible and granular so that it can be easily extended to do something else with the search results isntead > of counting the url matches._
@@ -27,6 +30,20 @@ Parallel-fetch fetches the search results parallely.
 
 Both these fetches use a common component `page-fetch` to fetch a single search result page.
 
+Which `fetch function` to use is determined by the configuration (config.json):
+For Serial:
+```
+{
+  "fetch-function-type": "serial"
+}
+```
+For Parallel:
+```
+{
+  "fetch-function-type": "parallel"
+}
+```
+
 ![components](https://raw.githubusercontent.com/nmjmdr/caterpillar/master/screenshots/Components.png)
 
 
@@ -37,6 +54,6 @@ The program runs unit tests using chain, mocha, sinon.
 The program uses "cheerio" to parse the html body of the search results. Cheerio loads the html and converts it a dom. It does not do any JS exection, just laods the dom to make it easy to search the elements. Still, ideally a regular expressions based search would be more performant. I faced some issues in parsing the body using regex and hence the use of cheerio. As one f the next steps it would be better to use regex to parse the body instead of using cheerio.
 
 Still it takes a lot less to parse the body as compared to fetching the response:
-
+![performance](https://github.com/nmjmdr/caterpillar/blob/master/screenshots/performance.png)
 
 
