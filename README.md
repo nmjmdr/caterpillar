@@ -8,16 +8,16 @@ _Caterpillar fetches results from google and finds if any of the links have the 
 `node index.js keywords="keywords" url="domain-to-look-for"`
 
 _Example_:
-![use](https://raw.githubusercontent.com/nmjmdr/caterpillar/master/screenshots/creditor_watch_use.png)
+![use](https://raw.githubusercontent.com/nmjmdr/caterpillar/master/screenshots/use1.png)
 
 ```The program looks for likns with the same `domain` as that of the url provided as input argument. It then outputs the links that did meet this criterion and the page numbes of which these links were found in google search results.```
 
 Another example:
-![anotherex](https://raw.githubusercontent.com/nmjmdr/caterpillar/master/screenshots/use_and_example_with_page_no.png)
+![anotherex](https://raw.githubusercontent.com/nmjmdr/caterpillar/master/screenshots/use2.png)
 
 ## Design notes:
 I have tried to follow a `functional` and `event driven` approach. 
->_The program is flexible and granular so that it can be easily extended to do something else with the search results isntead > of counting the url matches._
+>_The program is flexible and granular so that it can be easily extended to do something else with the search results instead > of determining the ranking of interested url._
 
 
 ### Components:
@@ -44,6 +44,12 @@ For Parallel:
   "fetch-function-type": "parallel"
 }
 ```
+
+_`link-counter/counter` is responsible for determining if any of the search results contain the domain you are interested in._
+It compares the domain name part of the url you are interested in with the domain name part of the links in search results.
+
+The `link-counter/counter` component listens to _ResultsFetched, SearchDone and SearchFailed_ events from `crawler` and in turn publishes "Success" (or "Failed") event once it is done computing the results (or if it fails - in case of search error).
+
 
 ![components](https://raw.githubusercontent.com/nmjmdr/caterpillar/master/screenshots/Components.png)
 
