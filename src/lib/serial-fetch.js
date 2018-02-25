@@ -16,6 +16,7 @@ function fetch(searchParams, eventEmitter) {
     return fetchPage(pageNumber);
   },(page)=>{
     if(page.hasSearchResults) {
+      page.pageNumber = pageNumber;
       eventEmitter.emit(eventNames.PageFetched, page);
       resultsCount = resultsCount + page.links.length;
       pageNumber = pageNumber + 1;

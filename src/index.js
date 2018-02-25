@@ -34,7 +34,9 @@ handlers[counter.SuccessEvent] = (ledger) => {
   console.log("");
   console.log("Number of matched results: ", ledger.length)
   console.log("-------------------------");
-  console.log(ledger);
+  ledger.forEach((entry)=>{
+    console.log(entry.link+ ", Page no. "+(entry.pageNumber+1));
+  });
   console.log("-------------------------");
 };
 

@@ -2,11 +2,25 @@ const lib = require('../lib/crawler');
 const serialFetch = require('../lib/serial-fetch');
 const events = require('../lib/event-names');
 const EventEmitter = require('events');
+const url = require('url');
 
 class LinkCountEmitter extends EventEmitter {};
 
 const SuccessEvent = "SuccessEvent";
 const FailedEvent = "FailedEvent";
+
+function getDomain(url) {
+  return url.replace('http://','').replace('https://','').replace('www.','').split(/[/?#]/)[0];
+}
+
+function areTheSameDomainName(link1, link2) {
+  if(!link1 || !link2) {
+    return false;
+  }
+  const link1Domain = getDomain(link1);
+  const link2Domain = getDomain(link2);
+  return link1Domain.toLowerCase() === link2Domain.toLowerCase()
+}
 
 function create(handlers) {
   const emitter = new LinkCountEmitter();
@@ -19,9 +33,15 @@ function create(handlers) {
     let ledger = [];
 
     internalHandlers[events.PageFetched] = (result) => {
-      const matchedLinks = result.links.filter((link)=>{
-        return (link.indexOf(urlToLookFor) !== -1)
-      });
+      const matchedLinks = result.links.reduce((acc,link)=>{
+        if(areTheSameDomainName(link, urlToLookFor)) {
+          acc.push({
+            link: link,
+            pageNumber: result.pageNumber
+          })
+        }
+        return acc;
+      },[]);
       ledger.push(...matchedLinks);
     }
     internalHandlers[events.SearchDone] = (result) => {
