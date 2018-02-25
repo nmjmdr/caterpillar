@@ -17,7 +17,7 @@ function fetch(searchParams, eventEmitter) {
   },(page)=>{
     if(page.hasSearchResults) {
       page.pageNumber = pageNumber;
-      eventEmitter.emit(eventNames.PageFetched, page);
+      eventEmitter.emit(eventNames.ResultsFetched, page);
       resultsCount = resultsCount + page.links.length;
       pageNumber = pageNumber + 1;
       return (resultsCount < searchParams.nResults && page.hasNext); // continue to fetch next page

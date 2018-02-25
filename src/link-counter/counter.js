@@ -32,7 +32,7 @@ function create(handlers) {
     let internalHandlers = {};
     let ledger = [];
 
-    internalHandlers[events.PageFetched] = (result) => {
+    internalHandlers[events.ResultsFetched] = (result) => {
       const matchedLinks = result.links.reduce((acc,link)=>{
         if(areTheSameDomainName(link, urlToLookFor)) {
           acc.push({

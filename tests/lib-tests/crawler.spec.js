@@ -13,12 +13,12 @@ describe('Given Crawler',()=>{
 
   describe('When crawler is setup',()=>{
     const fetch = sandbox.stub();
-    const onPageFetched = sandbox.stub();
+    const onResultsFetched = sandbox.stub();
     const onSearchDone = sandbox.stub();
     const onSearchFailed = sandbox.stub();
     const handlers = {};
 
-    handlers[eventNames.PageFetched] = onPageFetched;
+    handlers[eventNames.ResultsFetched] = onResultsFetched;
     handlers[eventNames.SearchDone] = onSearchDone;
     handlers[eventNames.SearchFailed] = onSearchFailed;
 
@@ -39,14 +39,14 @@ describe('Given Crawler',()=>{
       });
     });
 
-    it('Should subscribe the onPageFetched to PageFetched event',(done)=>{
+    it('Should subscribe the onResultsFetched to ResultsFetched event',(done)=>{
       crawl(nResults, resultsPerPage, keywords);
       check(done, ()=>{
         expect(fetch.called).to.be.true;
         const emitter = fetch.getCalls(0)[0].args[1];
         expect(emitter).to.exist;
-        emitter.emit(eventNames.PageFetched);
-        expect(onPageFetched.called).to.be.true;
+        emitter.emit(eventNames.ResultsFetched);
+        expect(onResultsFetched.called).to.be.true;
       });
     });
 

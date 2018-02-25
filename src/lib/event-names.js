@@ -1,6 +1,6 @@
 
 module.exports = {
-  PageFetched: 'PageFetched',
+  ResultsFetched: 'ResultsFetched',
   SearchDone: 'SearchDone',
   SearchFailed: 'SearchFailed'
 }

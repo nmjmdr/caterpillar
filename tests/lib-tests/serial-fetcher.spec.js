@@ -35,7 +35,7 @@ describe('Given the serial fetcher',()=>{
       const fetchPageCreate = sandbox.stub(pageFetcher, 'create').returns(fetchPage);
 
       let resultsFetched = 0;
-      emitter.on(eventNames.PageFetched,(payload)=>{
+      emitter.on(eventNames.ResultsFetched,(payload)=>{
         resultsFetched += payload.links.length ;
       });
 
@@ -71,7 +71,7 @@ describe('Given the serial fetcher',()=>{
         const fetchPageCreate = sandbox.stub(pageFetcher, 'create').returns(fetchPage);
 
         let resultsFetched = 0;
-        emitter.on(eventNames.PageFetched,(payload)=>{
+        emitter.on(eventNames.ResultsFetched,(payload)=>{
           resultsFetched += payload.links.length ;
         });
 
@@ -108,7 +108,7 @@ describe('Given the serial fetcher',()=>{
       const fetchPageCreate = sandbox.stub(pageFetcher, 'create').returns(fetchPage);
 
       let resultsFetched = 0;
-      emitter.on(eventNames.PageFetched,(payload)=>{
+      emitter.on(eventNames.ResultsFetched,(payload)=>{
         resultsFetched += payload.links.length;
       });
 
