@@ -11,6 +11,10 @@ _Example_:
 
 ```The program looks for likns with the same `domain` as that of the url provided as input argument. It then outputs the links that did meet this criterion and the page numbes of which these links were found in google search results.```
 
+## Design notes:
+I have tried to follow a `functional` and `event driven` approach. 
+>_The program is flexible and granular so that it can be easily extended to do something else with the search results isntead > of counting the url matches._
+
 
 
 
