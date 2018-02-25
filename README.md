@@ -30,6 +30,20 @@ Parallel-fetch fetches the search results parallely.
 
 Both these fetches use a common component `page-fetch` to fetch a single search result page.
 
+Which `fetch function` to use is determined by the configuration (config.json):
+For Serial:
+```
+{
+  "fetch-function-type": "serial"
+}
+```
+For Parallel:
+```
+{
+  "fetch-function-type": "parallel"
+}
+```
+
 ![components](https://raw.githubusercontent.com/nmjmdr/caterpillar/master/screenshots/Components.png)
 
 
