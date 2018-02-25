@@ -42,25 +42,26 @@ function create(handlers) {
   });
 
   return (keywords, urlToLookFor) => {
-    let internalHandlers = {};
     let ledger = [];
 
-    internalHandlers[events.ResultsFetched] = (results) => {
+    const crawler = lib.getCrawler(serialFetch.fetch)
+
+    crawler.eventEmitter.on(events.ResultsFetched, (results) => {
       results.forEach((result)=>{
         addMatchingLinksToLedger(ledger, result, urlToLookFor);
       });
-    }
-    internalHandlers[events.SearchDone] = (result) => {
+    });
+
+    crawler.eventEmitter.on(events.SearchDone, (result) => {
       emitter.emit(SuccessEvent, ledger)
       return;
-    }
+    });
 
-    internalHandlers[events.SearchFailed] = (error) => {
+    crawler.eventEmitter.on(events.SearchFailed, (error) => {
       emitter.emit(FailedEvent, error)
       return;
-    }
-
-    lib.getCrawler(serialFetch.fetch,internalHandlers)(100, 10, keywords);
+    });
+    crawler.crawl(100, 10, keywords);
   }
 }
 

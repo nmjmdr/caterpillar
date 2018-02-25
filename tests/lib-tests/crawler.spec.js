@@ -18,11 +18,14 @@ describe('Given Crawler',()=>{
     const onSearchFailed = sandbox.stub();
     const handlers = {};
 
-    handlers[eventNames.ResultsFetched] = onResultsFetched;
-    handlers[eventNames.SearchDone] = onSearchDone;
-    handlers[eventNames.SearchFailed] = onSearchFailed;
+    const crawler = lib.getCrawler(fetch);
 
-    const crawl = lib.getCrawler(fetch, handlers);
+    crawler.eventEmitter.on(eventNames.ResultsFetched, onResultsFetched);
+    crawler.eventEmitter.on(eventNames.SearchDone, onSearchDone);
+    crawler.eventEmitter.on(eventNames.SearchFailed, onSearchFailed);
+
+    const crawl = crawler.crawl;
+
     const nResults = 100;
     const resultsPerPage = 10;
     const keywords = "some keywords";
