@@ -10,7 +10,7 @@ _Caterpillar fetches results from google and finds if any of the links have the 
 _Example_:
 ![use](https://raw.githubusercontent.com/nmjmdr/caterpillar/master/screenshots/use1.png)
 
-```The program looks for likns with the same `domain` as that of the url provided as input argument. It then outputs the links that did meet this criterion and the page numbes of which these links were found in google search results.```
+```The program looks for links with the same `domain` as that of the url provided as input argument. It then outputs the links that did meet this criterion and the rankinf of the links in google search results.```
 
 Another example:
 ![anotherex](https://raw.githubusercontent.com/nmjmdr/caterpillar/master/screenshots/use2.png)
