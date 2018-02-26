@@ -31,7 +31,7 @@ Parallel-fetch fetches the search results parallely.
 
 Both these fetches use a common component `page-fetch` to fetch a single search result page.
 
-Which `fetch function` to use is determined by the configuration (config.json):
+Whether the program uses serial or parallel fetch function is determined by the configuration (config.json):
 For Serial:
 ```
 {
