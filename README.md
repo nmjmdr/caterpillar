@@ -17,7 +17,7 @@ Another example:
 
 ## Design notes:
 I have tried to follow a `functional` and `event driven` approach. 
->_The program is flexible and granular so that it can be easily extended to do something else with the search results instead > of determining the ranking of interested url._
+>_The program is flexible and granular so that it can be easily extended to do something else with the search results as well. (We just have to add more listeners (details below))._
 
 
 ### Components:
