@@ -58,9 +58,11 @@ The `link-counter/counter` component listens to _ResultsFetched, SearchDone and 
 The program runs unit tests using chain, mocha, sinon.
 
 ### Performance:
-The program uses "cheerio" to parse the html body of the search results. Cheerio loads the html and converts it a dom. It does not do any JS exection, just laods the dom to make it easy to search the elements. Still, ideally a regular expressions based search would be more performant. I faced some issues in parsing the body using regex and hence the use of cheerio. As one f the next steps it would be better to use regex to parse the body instead of using cheerio.
+The program uses "cheerio" to parse the html body of the search results. Cheerio loads the html and converts it a dom. It does not do any JS exection. It just loads the dom to make it easy to search the elements. 
 
-Still it takes a lot less to parse the body as compared to fetching the response:
+Ideally a regular expressions based search would be more performant. I faced some issues in parsing the body using regex and hence the use of cheerio. As one of the next steps it would be better to use regex to parse the body instead of using cheerio.
+
+All though it takes a lot less to parse the body as compared to fetching the response, using regular expression to parse the body would possibly an improvement.
 ![performance](https://github.com/nmjmdr/caterpillar/blob/master/screenshots/performance.png)
 
 
